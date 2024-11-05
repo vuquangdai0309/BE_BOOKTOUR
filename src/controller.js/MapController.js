@@ -26,11 +26,10 @@ class MapController {
   //[POST]
   async CreateMap(req, res) {
     try {
-      let token = req.cookies[process.env.COOKIE];
-      let par = jwt.verify(token, process.env.SECRET);
+      const user_id = req.user_id
       const form = {
         code: Generate(8),
-        user_id: par.id,
+        user_id: user_id,
         ...req.body,
       };
       await MapModel.createMap(form);

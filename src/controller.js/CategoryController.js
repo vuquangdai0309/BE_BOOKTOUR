@@ -1,4 +1,3 @@
-import { message } from "antd";
 import CategoryModel from "../models/Category";
 import jwt from "jsonwebtoken";
 class CategoryController {
@@ -26,10 +25,9 @@ class CategoryController {
   //[POST]
   async CreateCategory(req, res) {
     try {
-      let token = req.cookies[process.env.COOKIE];
-      let par = jwt.verify(token, process.env.SECRET);
+      const user_id = req.user_id
       const form = {
-        user_id: par.id,
+        user_id: user_id,
         name: req.body.name,
       };
       await CategoryModel.CreateCategory(form);
@@ -45,6 +43,7 @@ class CategoryController {
       const id = req.params.id;
       const form = {
         name: req.body.name,
+        active:  req.body.active
       };
       await CategoryModel.UpdateCategory(id, form);
       res.status(200).json({ message: "Chỉnh sửa bản ghi thành công" });

@@ -26,11 +26,13 @@ class AccountController {
   // [POST]
   async Login(req, res) {
     try {
+     
       const user_name = req.body.user_name;
       const password = req.body.password;
       const accounts = await AccountModel.LoginAccount(user_name, password);
       if (accounts.length > 0) {
         const data = accounts[0];
+        console.log(`data:`,data)
         const token = jwt.sign(
           {
             id: data.id,
@@ -41,12 +43,17 @@ class AccountController {
           httpOnly: true,
           maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
         });
-        res.json({
+        return res.status(200).json({
           message: "Đăng nhập thành công",
           token: token,
+          role_id: data.role_id,
           full_name: data.full_name,
           avatar: data.avatar,
         });
+      } else {
+        return res.status(400).json({
+          message: "Tài khoản hoặc mật khẩu không chính xác"
+        })
       }
     } catch (error) {
       console.log(error);

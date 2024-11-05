@@ -1,14 +1,25 @@
 import connection from "../config/db";
+import MapDetailModel from "./MapDetail";
 const MapModel = {
   // lấy tất cả Map
   getAllMap: () => {
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM map WHERE is_deleted = 0`;
-      connection.query(query, (err, results) => {
+      connection.query(query, async (err, results) => {
         if (err) {
           reject(err);
         } else {
-          resolve(results);
+          const newArr = []
+          for (const item of results) {
+            const listMapDetail = await MapDetailModel.GetMapDetailByMapId(item.id)
+            const newData = {
+              ...item,
+              ...listMapDetail
+            }
+            newArr.push(newData)
+          }
+
+          resolve(newArr);
         }
       });
     });

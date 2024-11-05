@@ -19,6 +19,25 @@ const MapDetailModel = {
       });
     });
   },
+  // Lấy map chi tiết theo map
+  GetMapDetailByMapId: (map_id) => {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT map_detail.*,
+        map.name AS name_map,
+        map.coordinates AS coordinates
+        FROM map_detail
+        JOIN map ON map_detail.map_id = map.id
+        WHERE map_detail.is_deleted = 0 AND map_detail.map_id=${map_id}
+        `;
+      connection.query(query, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results?.[0]);
+        }
+      });
+    });
+  },
   // lấy 1 bài viết
   GetOneMapDetail: (id) => {
     return new Promise((resolve, reject) => {

@@ -1,6 +1,5 @@
 import MapDetailModel from "../models/MapDetail";
 import Generate from "../middlewares/generate";
-import { message } from "antd";
 import jwt from "jsonwebtoken";
 class MapDetailController {
   //[GET]

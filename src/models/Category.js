@@ -42,8 +42,8 @@ const CategoryModel = {
   // chỉnh sửa
   UpdateCategory: (id, item) => {
     return new Promise((resolve, reject) => {
-      const query = `UPDATE category SET name = ? WHERE id = ?`;
-      connection.query(query, [item.name, id], (err, results) => {
+      const query = `UPDATE category SET name = ? , active = ? WHERE id = ?`;
+      connection.query(query, [item.name, item.active, id], (err, results) => {
         if (err) {
           reject(err);
         } else {
