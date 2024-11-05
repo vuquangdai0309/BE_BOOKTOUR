@@ -16,8 +16,8 @@ const ViewMapModel = {
   // tạo viewmap
   CreateViewMap: (item) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO viewmap (user_id,lat,lng,zoomlevel) VALUES (?,?,?,?)`;
-      const values = [item.user_id, item.lat, item.lng, item.zoomlevel];
+      const query = `INSERT INTO viewmap (user_id,lat,lng,zoom_level) VALUES (?,?,?,?)`;
+      const values = [item.user_id, item.lat, item.lng, item.zoom_level];
       connection.query(query, values, (err, results) => {
         if (err) {
           reject(err);
@@ -28,10 +28,10 @@ const ViewMapModel = {
     });
   },
   // xóa
-  RemoveViewMap: (id) => {
+  RemoveViewMap: () => {
     return new Promise((resolve, reject) => {
-      const query = `DELETE FROM viewmap WHERE id = ?`;
-      connection.query(query, id, (err, results) => {
+      const query = `DELETE FROM viewmap `;
+      connection.query(query, (err, results) => {
         if (err) {
           reject(err);
         } else {

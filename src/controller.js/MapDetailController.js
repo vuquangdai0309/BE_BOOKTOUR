@@ -35,7 +35,7 @@ class MapDetailController {
         code: Generate(8),
         user_id: par.id,
         logo: req.files["logo"][0].path,
-        image: JSON.stringify(imagePath),
+        image: imagePath.join(","),
         ...req.body,
       };
 
@@ -53,9 +53,10 @@ class MapDetailController {
       var imagePath = req.body.image;
       var logoPath = req.body.logo;
       if (req.files["image"]) {
-        imagePath = req.files["image"].map((item) => {
+        var image = req.files["image"].map((item) => {
           return item.path;
         });
+        imagePath = image.join(",");
       }
       if (req.files["logo"]) {
         logoPath = req.files["logo"][0].path;
