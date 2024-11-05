@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import ViewMapModel from "../models/ViewMap";
+import { message } from "antd";
 class ViewMapController {
   //[GET]
   async GetOneViewmap(req, res) {
@@ -19,11 +20,13 @@ class ViewMapController {
       const viewmap = await ViewMapModel.GetOneViewMap();
       const form = {
         user_id: par.id,
+        ...req.body,
       };
       if (viewmap.length > 0) {
-      } else {
-        ViewMapModel.CreateViewMap();
+        ViewMapModel.RemoveViewMap();
       }
+      ViewMapModel.CreateViewMap(form);
+      res.status(200).json({ message: "Thêm bản ghi thành công" });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
