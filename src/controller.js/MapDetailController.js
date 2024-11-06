@@ -62,7 +62,6 @@ class MapDetailController {
       if (req.files["logo"]) {
         logoPath = req.files["logo"][0].path;
       }
-
       const form = {
         logo: logoPath,
         image: imagePath,
