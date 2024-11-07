@@ -36,7 +36,7 @@ const MapModel = {
   getOneMap: (id) => {
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM map WHERE is_deleted = 0 AND id IN(?)`;
-      connection.query(query, [id], (err, results) => {
+      connection.query(query, [id], async(err, results) => {
         if (err) {
           return reject(err);
         } else {
