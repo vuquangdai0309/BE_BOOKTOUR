@@ -35,9 +35,8 @@ const MapModel = {
   // lấy 1 địa điểm
   getOneMap: (id) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM map WHERE is_deleted = 0 AND id = ${id}`;
-      console.log(query)
-      connection.query(query, async (err, results) => {
+      const query = `SELECT * FROM map WHERE is_deleted = 0 AND id IN(?)`;
+      connection.query(query, [id], (err, results) => {
         if (err) {
           return reject(err);
         } else {
