@@ -60,11 +60,10 @@ const MapDetailModel = {
   // tạo mới
   CreateMapDetail: (item) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO map_detail(code,user_id,map_id,title,logo,image,address,content,open_hour)
-      VALUES (?,?,?,?,?,?,?,?,?)
+      const query = `INSERT INTO map_detail(user_id,map_id,title,logo,image,address,content,open_hour)
+      VALUES (?,?,?,?,?,?,?,?)
         `;
       const values = [
-        item.code,
         item.user_id,
         item.map_id,
         item.title,
@@ -86,17 +85,14 @@ const MapDetailModel = {
   // chỉnh sửa
   UpdateMapDetail: (id, item) => {
     return new Promise((resolve, reject) => {
-      const query = `UPDATE map_detail SET map_id = ?,title = ?,logo = ?,image = ?,address = ?,content = ?,open_hour = ?   
-        `;
+      const query = `UPDATE map_detail SET title = ?,logo = ?,image = ?,address = ?,content = ?,open_hour = ? WHERE map_id = ${id}`;
       const values = [
-        item.map_id,
         item.title,
         item.logo,
         item.image,
         item.address,
         item.content,
         item.open_hour,
-        id,
       ];
       connection.query(query, values, (err, results) => {
         if (err) {

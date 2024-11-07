@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import ViewMapModel from "../models/ViewMap";
-import { message } from "antd";
 class ViewMapController {
   //[GET]
   async GetOneViewmap(req, res) {

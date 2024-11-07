@@ -9,16 +9,24 @@ const MapModel = {
         if (err) {
           reject(err);
         } else {
+          if(results.length === 0){
+            return reject(err)
+          }
           const newArr = []
           for (const item of results) {
+            const { id, ...data } = item
             const listMapDetail = await MapDetailModel.GetMapDetailByMapId(item.id)
-            const newData = {
-              ...item,
-              ...listMapDetail
-            }
-            newArr.push(newData)
+           if(listMapDetail){
+             const { id: mapDetail_id, ...dataDetail } = listMapDetail
+             const newData = {
+               id: id,
+               ...data,
+               mapDetail_id: mapDetail_id,
+               ...dataDetail
+             }
+             newArr.push(newData)
+           }
           }
-
           resolve(newArr);
         }
       });
@@ -27,12 +35,27 @@ const MapModel = {
   // lấy 1 địa điểm
   getOneMap: (id) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM map WHERE is_deleted = 0 AND id = ?`;
-      connection.query(query, id, (err, results) => {
+      const query = `SELECT * FROM map WHERE is_deleted = 0 AND id = ${id}`;
+      console.log(query)
+      connection.query(query, async (err, results) => {
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
-          resolve(results);
+          if (results.length === 0) {
+            return reject(err)
+          }
+
+          const { ...data } = results[0]
+          const dataDetail = await MapDetailModel.GetMapDetailByMapId(id)
+          const { id: mapDetail_id,logo, ...items } = dataDetail
+          const newData = {
+            id: id,
+            ...data,
+            logo:logo.replace(/\\/g, '/'),
+            mapDetail_id: mapDetail_id,
+            ...items
+          }
+          return resolve(newData);
         }
       });
     });
@@ -40,13 +63,12 @@ const MapModel = {
   //tạo điểm du lịch
   createMap: (item) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO map(code,user_id,name,coordinates,type) VALUES (?,?,?,?,?)`;
+      const query = `INSERT INTO map(code,user_id,name,coordinates) VALUES (?,?,?,?)`;
       const values = [
         item.code,
         item.user_id,
         item.name,
         item.coordinates,
-        item.type,
       ];
       connection.query(query, values, (err, results) => {
         if (err) {
