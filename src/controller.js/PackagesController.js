@@ -15,7 +15,8 @@ class PackagesController {
   //[GET]
   async GetOnePackages(req, res) {
     try {
-      const packages = await PackagesRouter.GetOnePackages();
+      const id = req.params.id;
+      const packages = await PackagesRouter.GetOnePackages(id);
       res.status(200).json({ packages: packages[0] });
     } catch (error) {
       console.log(error);
@@ -59,6 +60,7 @@ class PackagesController {
   async RemovePackages(req, res) {
     try {
       const id = req.params.id;
+      
       await PackagesRouter.DeletePackages(id);
       res.status(200).json({ message: "Xóa bản ghi thành công" });
     } catch (error) {

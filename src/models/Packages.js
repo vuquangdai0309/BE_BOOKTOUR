@@ -57,7 +57,7 @@ const PackagesRouter = {
   // xóa bỏ
   DeletePackages: (id) => {
     return new Promise((resolve, reject) => {
-      const query = `UPDATE packages SET is_deleted = ? WHERE id =?`;
+      const query = `UPDATE packages SET is_deleted = 1 WHERE id = ?`;
       connection.query(query, id, (err, results) => {
         if (err) {
           reject(err);
