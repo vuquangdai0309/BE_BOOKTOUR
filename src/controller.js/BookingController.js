@@ -19,6 +19,8 @@ class BookingController {
               note: element.note,
               booking_date: element.booking_date,
               name_packages: element.name_packages,
+              status: element.status,
+              created_at: element.created_at,
               tour: [],
             });
           }
@@ -73,10 +75,10 @@ class BookingController {
         ...req.body,
       };
       await BookingModel.CreateBooking(form);
-      res.status(200).json({ message: "Thêm bản ghi thành công" });
+      return res.status(200).json({ message: "Đã đặt lịch hẹn , chúng tôi sẽ liên hệ cho bạn sớm nhất có thể" });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Lỗi truy vấn" });
+      return res.status(500).json({ message: "Lỗi truy vấn" });
     }
   }
   // [PATCH]
@@ -91,6 +93,23 @@ class BookingController {
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
+    }
+  }
+  // cập nhật trạng thái
+  async updateStatus(req,res){
+    try {
+      const id = req.params.id
+      const status = req.body.status
+      if(!status || status > 2){
+        return res.status(500).json({ message: "Có lỗi xảy ra , hiện không cập nhật được trạng thái" });
+      }
+      await BookingModel.updateStatus(id,status)
+      return res.status(203).json({
+        message: "Đã cập nhật thành công trạng thái"
+      })
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Lỗi truy vấn" });
     }
   }
   // [DELETE]

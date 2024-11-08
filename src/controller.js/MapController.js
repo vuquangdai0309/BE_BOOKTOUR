@@ -25,6 +25,16 @@ class MapController {
       res.status(500).json({ message: "Lỗi truy vấn" });
     }
   }
+  async GetOneByCoordinates(req, res) {
+    try {
+      const coordinates = req.params.coordinates;
+      const maps = await MapModel.getOneMapByCoordinates(coordinates);
+      res.status(200).json(maps);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Lỗi truy vấn" });
+    }
+  }
   //[POST]
   async CreateMap(req, res) {
     try {
@@ -84,7 +94,7 @@ class MapController {
       }
       const newDataMapDetail = {
         logo: req.files["logo"] ? req.files["logo"][0].path.replace(/\\/g, '/') : logo,
-        image: imageString ? imageString : image ,
+        image: imageString ? imageString : image,
         ...mapDetail
       }
       await MapDetailModel.UpdateMapDetail(id, newDataMapDetail)

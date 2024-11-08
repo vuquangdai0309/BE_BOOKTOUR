@@ -59,6 +59,32 @@ const MapModel = {
       });
     });
   },
+  getOneMapByCoordinates: (coordinates) => {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM map WHERE coordinates LIKE '%${coordinates}%'`;
+      connection.query(query, async(err, results) => {
+        if (err) {
+          return reject(err);
+        } else {
+          if (results.length === 0) {
+            return reject(err)
+          }
+
+          const { id,...data } = results[0]
+          const dataDetail = await MapDetailModel.GetMapDetailByMapId(id)
+          const { id: mapDetail_id,logo, ...items } = dataDetail
+          const newData = {
+            id: id,
+            ...data,
+            logo:logo.replace(/\\/g, '/'),
+            mapDetail_id: mapDetail_id,
+            ...items
+          }
+          return resolve(newData);
+        }
+      });
+    });
+  },
   //tạo điểm du lịch
   createMap: (item) => {
     return new Promise((resolve, reject) => {

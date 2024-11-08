@@ -32,7 +32,7 @@ class TourController {
     try {
       const id = req.params.id;
       const tours = await TourModel.GetOneTour(id);
-      res.status(200).json({ tours: tours[0] });
+      res.status(200).json(tours[0]);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -66,12 +66,10 @@ class TourController {
         });
         const data = Array.from(tourMap.entries()).map(([id, item]) => {
           return {
-            point_id: id,
-            name_map: item.name_map,
             suggestArray: Array.from(item.suggestObj.values()),
           };
         });
-        res.status(200).json({data:data[0]});
+        res.status(200).json(data.length > 0 ? data[0].suggestArray : []);
       }
     } catch (error) {
       console.log(error);

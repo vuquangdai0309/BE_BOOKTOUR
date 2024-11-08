@@ -91,6 +91,18 @@ const BookingModel = {
       });
     });
   },
+  // update status
+  updateStatus:(id,status) => {
+    return new Promise((resolve, reject) => {
+      const query = `UPDATE bookings SET status = ${status} WHERE id = ${id}`
+      connection.query(query,(err,results) => {
+        if(err){
+          return reject(err)
+        }
+        return resolve(results)
+      })
+    })
+  },
   // xóa
   RemoveBooking: (id) => {
     return new Promise((resolve, reject) => {
