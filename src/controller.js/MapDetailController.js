@@ -32,7 +32,7 @@ class MapDetailController {
         return item.path;
       });
       const form = {
-        code: Generate(8),
+        code: Generate.generateRandomString(8),
         user_id: par.id,
         logo: req.files["logo"][0].path,
         image: imagePath.join(","),

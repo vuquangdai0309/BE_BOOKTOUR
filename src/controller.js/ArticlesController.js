@@ -53,7 +53,7 @@ class AccountController {
       const imagePath = req.file.path;
       const form = {
         user_id: par.id,
-        code: Generate(8),
+        code: Generate.generateRandomString(8),
         image: imagePath,
         ...req.body,
       };

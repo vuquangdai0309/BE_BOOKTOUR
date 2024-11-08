@@ -9,23 +9,25 @@ const MapModel = {
         if (err) {
           reject(err);
         } else {
-          if(results.length === 0){
-            return reject(err)
+          if (results.length === 0) {
+            return reject(err);
           }
-          const newArr = []
+          const newArr = [];
           for (const item of results) {
-            const { id, ...data } = item
-            const listMapDetail = await MapDetailModel.GetMapDetailByMapId(item.id)
-           if(listMapDetail){
-             const { id: mapDetail_id, ...dataDetail } = listMapDetail
-             const newData = {
-               id: id,
-               ...data,
-               mapDetail_id: mapDetail_id,
-               ...dataDetail
-             }
-             newArr.push(newData)
-           }
+            const { id, ...data } = item;
+            const listMapDetail = await MapDetailModel.GetMapDetailByMapId(
+              item.id
+            );
+            if (listMapDetail) {
+              const { id: mapDetail_id, ...dataDetail } = listMapDetail;
+              const newData = {
+                id: id,
+                ...data,
+                mapDetail_id: mapDetail_id,
+                ...dataDetail,
+              };
+              newArr.push(newData);
+            }
           }
           resolve(newArr);
         }
@@ -36,25 +38,39 @@ const MapModel = {
   getOneMap: (id) => {
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM map WHERE is_deleted = 0 AND id IN(?)`;
-      connection.query(query, [id], async(err, results) => {
+      connection.query(query, [id], async (err, results) => {
         if (err) {
           return reject(err);
         } else {
           if (results.length === 0) {
-            return reject(err)
+            return reject(err);
           }
 
-          const { ...data } = results[0]
-          const dataDetail = await MapDetailModel.GetMapDetailByMapId(id)
-          const { id: mapDetail_id,logo, ...items } = dataDetail
+          const { ...data } = results[0];
+          const dataDetail = await MapDetailModel.GetMapDetailByMapId(id);
+          const { id: mapDetail_id, logo, ...items } = dataDetail;
           const newData = {
             id: id,
             ...data,
-            logo:logo.replace(/\\/g, '/'),
+            logo: logo.replace(/\\/g, "/"),
             mapDetail_id: mapDetail_id,
-            ...items
-          }
+            ...items,
+          };
           return resolve(newData);
+        }
+      });
+    });
+  },
+
+  // lấy địa điểm theo code
+  getOneMap_ByCode: (code) => {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM map WHERE is_deleted = 0 AND code IN(?)`;
+      connection.query(query, code, async (err, results) => {
+        if (err) {
+          return reject(err);
+        } else {
+          return resolve(results);
         }
       });
     });
@@ -63,12 +79,7 @@ const MapModel = {
   createMap: (item) => {
     return new Promise((resolve, reject) => {
       const query = `INSERT INTO map(code,user_id,name,coordinates) VALUES (?,?,?,?)`;
-      const values = [
-        item.code,
-        item.user_id,
-        item.name,
-        item.coordinates,
-      ];
+      const values = [item.code, item.user_id, item.name, item.coordinates];
       connection.query(query, values, (err, results) => {
         if (err) {
           reject(err);
