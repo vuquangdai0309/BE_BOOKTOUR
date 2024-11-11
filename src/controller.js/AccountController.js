@@ -26,16 +26,16 @@ class AccountController {
   // [POST]
   async Login(req, res) {
     try {
-     
       const user_name = req.body.user_name;
       const password = req.body.password;
       const accounts = await AccountModel.LoginAccount(user_name, password);
       if (accounts.length > 0) {
         const data = accounts[0];
-        console.log(`data:`,data)
+
         const token = jwt.sign(
           {
             id: data.id,
+            role: data.role_id,
           },
           process.env.SECRET
         );
@@ -52,8 +52,8 @@ class AccountController {
         });
       } else {
         return res.status(400).json({
-          message: "Tài khoản hoặc mật khẩu không chính xác"
-        })
+          message: "Tài khoản hoặc mật khẩu không chính xác",
+        });
       }
     } catch (error) {
       console.log(error);
@@ -74,7 +74,7 @@ class AccountController {
         res.status(302).json({ message: "Tài khoản đã tồn tại" });
       } else {
         const form = {
-          code: Generate(8),
+          code: Generate.generateRandomString(8),
           ...req.body,
         };
         await AccountModel.CreatedAccount(form);

@@ -1,13 +1,13 @@
 import express from "express";
 import TourController from "../controller.js/TourController";
 const router = express.Router();
-
+import checkToken from "../middlewares/checkToken";
 // xóa bỏ
-router.delete("/:id/delete-tour", TourController.RemoveTour);
+router.delete("/:id/delete-tour",checkToken, TourController.RemoveTour);
 // tạo mới
-router.patch("/:id/update-tour", TourController.UpdateTour);
+router.patch("/:id/update-tour",checkToken, TourController.UpdateTour);
 // tạo mới
-router.post("/create-tour", TourController.CreateTour);
+router.post("/create-tour",checkToken, TourController.CreateTour);
 // lấy theo point
 router.get("/:point/get-one-tour-point", TourController.GetOneTour_ByPoint);
 // lấy 1 theo id

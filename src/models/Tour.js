@@ -1,23 +1,41 @@
 import connection from "../config/db";
+import MapModel from "./Map";
 const TourModel = {
   // lấy tất cả
   GetAllTour: () => {
     return new Promise((resolve, reject) => {
       const query = `SELECT tours.*, 
       map.name AS name_map,
-      map_suggest.name AS map_suggest
+      map.logo AS logo_map,
+      map.image AS image_map
       FROM tours 
       JOIN map ON tours.point_id = map.id
-      JOIN map AS map_suggest  ON FIND_IN_SET(map_suggest.id,tours.suggest_id) > 0 
       WHERE tours.is_deleted = 0 AND map.is_deleted = 0
-     ORDER BY FIND_IN_SET(map_suggest.id, tours.suggest_id) , tours.id ASC
      ;
       `;
-      connection.query(query, (err, results) => {
+      connection.query(query, async (err, results) => {
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
-          resolve(results);
+          const newArr = []
+          for (const item of results) {
+            const { suggest_id, ...data } = item
+            const suggestArr = suggest_id.split(",").map(item => Number(item))
+            // mảng chứa suggest name
+            const suggest = []
+            // tim kiem map theo suggest id
+            for (const itemSuggest of suggestArr) {
+              const mapById = await MapModel.getOneMap(itemSuggest)
+              const nameMap = mapById.name
+              suggest.push(nameMap)
+            }
+            const newData = {
+              suggest: suggest,
+              ...data
+            }
+            newArr.push(newData)
+          }
+          return resolve(newArr);
         }
       });
     });
@@ -25,13 +43,34 @@ const TourModel = {
   // lấy theo id
   GetOneTour: (id) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM tours
-      WHERE is_deleted = 0 AND id = ?`;
-      connection.query(query, id, (err, results) => {
+      const query = `SELECT t.*,
+      m.name AS name_map
+      FROM tours t
+      JOIN map m ON m.id = t.point_id
+      WHERE t.is_deleted = 0 AND t.id = ?`;
+      connection.query(query, id, async (err, results) => {
         if (err) {
           reject(err);
         } else {
-          resolve(results);
+          if (results.length === 0) {
+            return reject(err)
+          }
+          const { suggest_id, ...data } = results[0]
+          const suggestArr = suggest_id.split(",").map(item => Number(item))
+          // mảng chứa suggest name
+          const suggest = []
+          // tim kiem map theo suggest id
+          for (const itemSuggest of suggestArr) {
+            const mapById = await MapModel.getOneMap(itemSuggest)
+            const nameMap = mapById.name
+            suggest.push(nameMap)
+          }
+          const newData = {
+            suggest: suggest,
+            suggest_id:suggest_id,
+            ...data
+          }
+          resolve(newData);
         }
       });
     });
@@ -40,20 +79,35 @@ const TourModel = {
   GetOneTour_ByPoint: (point) => {
     return new Promise((resolve, reject) => {
       const query = `SELECT tours.*, 
-      map.name AS name_map,
-      map_suggest.name AS map_suggest
+      map.name AS name_map
       FROM tours 
       JOIN map ON tours.point_id = map.id
-      JOIN map AS map_suggest  ON FIND_IN_SET(map_suggest.id,tours.suggest_id) > 0 
-      WHERE tours.is_deleted = 0 AND map.is_deleted = 0 AND point_id = ?
-     ORDER BY FIND_IN_SET(map_suggest.id, tours.suggest_id)
+      WHERE tours.is_deleted = 0 AND map.is_deleted = 0 AND point_id = ${point}
      ;
       `;
-      connection.query(query, point, (err, results) => {
+      connection.query(query, async (err, results) => {
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
-          resolve(results);
+          const newArr = []
+          for (const item of results) {
+            const { suggest_id, ...data } = item
+            const suggestArr = suggest_id.split(",").map(item => Number(item))
+            // mảng chứa suggest name
+            const suggest = []
+            // tim kiem map theo suggest id
+            for (const itemSuggest of suggestArr) {
+              const mapById = await MapModel.getOneMap(itemSuggest)
+              const nameMap = mapById.name
+              suggest.push(nameMap)
+            }
+            const newData = {
+              suggest: suggest,
+              ...data
+            }
+            newArr.push(newData)
+          }
+          return resolve(newArr);
         }
       });
     });

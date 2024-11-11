@@ -15,9 +15,10 @@ class AccountController {
   //[GET]
   async GetOneArticles(req, res) {
     try {
+      console.log(12312313)
       const id = req.params.id;
       const articles = await ArticlesModel.GetOneArticles(id);
-      res.status(200).json({ articles: articles[0] });
+      return res.status(200).json(articles);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -48,12 +49,12 @@ class AccountController {
   //[POST]
   async CreateArticles(req, res) {
     try {
-      let token = req.cookies[process.env.COOKIE];
-      let par = jwt.verify(token, process.env.SECRET);
+      console.log(`req.file:`,req.file)
+     const user_id =  req.user_id
       const imagePath = req.file.path;
       const form = {
-        user_id: par.id,
-        code: Generate(8),
+        user_id:user_id,
+        code: Generate.generateRandomString(8),
         image: imagePath,
         ...req.body,
       };
@@ -67,15 +68,13 @@ class AccountController {
   //[PATCH]
   async UpdateArticles(req, res) {
     try {
-      const id = req.params.id;
-      var imagePath = req.body.image;
-      if (req.file) {
-        imagePath = req.file.path;
-      }
+      const id = req.body.id;
+      var imagePath = req.file ? req.file.path : req.body.image;
       const form = {
         image: imagePath,
         ...req.body,
       };
+    
       await ArticlesModel.UpdateArticles(id, form);
       res.status(200).json({ message: "Chỉnh sửa bản ghi thành công" });
     } catch (error) {
