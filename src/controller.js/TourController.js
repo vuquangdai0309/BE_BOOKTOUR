@@ -3,10 +3,45 @@ import TourModel from "../models/Tour";
 
 class TourController {
   // [GET]
+  async GetAllTourPage(req, res) {
+    try {
+      const { searchName, page = 1,pageSize: sizePage } = req.query;
+      const pageSize = sizePage ? sizePage : 6; // Kích thước trang
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = page * pageSize;
+      const tours = await TourModel.GetAllTourPage(searchName);
+      const totalRecords = tours.length; // Tổng số bản ghi
+      const totalPages = Math.ceil(totalRecords / pageSize);
+      const pages = Array.from({ length: totalPages }, (_, index) => {
+        return {
+          number: index + 1,
+          active: index + 1 === page,
+          isDots: index + 1 > 5,
+        };
+      });
+      const paginatedData = tours.slice(startIndex, endIndex);
+      const views = {
+        results: paginatedData,
+        pagination: {
+          prev: page > 1 ? page - 1 : null,
+          next: endIndex < totalRecords ? page + 1 : null,
+          pages: pages,
+          totalPages: totalPages,
+          pageSize: pageSize,
+          totalRecords: totalRecords // Thêm tổng số bản ghi
+        },
+      };
+      return res.status(200).json(views);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Lỗi truy vấn" });
+    }
+  }
+  // [GET]
   async GetAllTour(req, res) {
     try {
       const tours = await TourModel.GetAllTour();
-       return res.status(200).json(tours);
+      return res.status(200).json(tours);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });

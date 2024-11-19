@@ -59,8 +59,8 @@ const ArticlesModel = {
   // tạo mới
   CreateArticles: (item) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO articles(user_id,category_id,name,date,image,content)
-      VALUES (?,?,?,?,?,?)
+      const query = `INSERT INTO articles(user_id,category_id,name,date,image,content,code)
+      VALUES (?,?,?,?,?,?,?)
       `;
       const values = [
         item.user_id,
@@ -69,6 +69,7 @@ const ArticlesModel = {
         item.date,
         item.image,
         item.content,
+        item.code,
       ];
       connection.query(query, values, (err, results) => {
         if (err) {
@@ -81,6 +82,7 @@ const ArticlesModel = {
   },
   // chỉnh sửa
   UpdateArticles: (id, item) => {
+    console.log(`item:`,item)
     return new Promise((resolve, reject) => {
       const query = `UPDATE articles SET category_id = ?,name = ?,date = ?,image = ?,content = ?,active = ? WHERE id = ?
       `;
