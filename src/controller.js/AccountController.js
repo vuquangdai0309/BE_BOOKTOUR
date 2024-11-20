@@ -6,10 +6,9 @@ class AccountController {
   async GetAllAccount(req, res) {
     try {
       const accounts = await AccountModel.GetAllAccount();
-      res.status(200).json(accounts);
+      return res.status(200).json(accounts);
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Lỗi truy vấn" });
+      return res.status(500).json({ message: "Lỗi truy vấn" });
     }
   }
   // [GET]
@@ -17,10 +16,10 @@ class AccountController {
     try {
       const id = req.params.id;
       const accounts = await AccountModel.GetOneAccount(id);
-      res.status(200).json(accounts);
+      return res.status(200).json(accounts);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Lỗi truy vấn" });
+      return res.status(500).json({ message: "Lỗi khi hiển thị dữ liệu người dùng" });
     }
   }
   // [POST]
@@ -93,7 +92,8 @@ class AccountController {
       const user_name = req.body.user_name;
       const getOne = await AccountModel.GetAccount_ByEmailAndUserName(
         email,
-        user_name
+        user_name,
+        id
       );
       if (getOne.length > 0) {
         res.status(302).json({ message: "Tài khoản đã tồn tại" });
