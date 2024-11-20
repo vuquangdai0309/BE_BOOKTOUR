@@ -17,7 +17,7 @@ class PackagesController {
     try {
       const id = req.params.id;
       const packages = await PackagesRouter.GetOnePackages(id);
-      res.status(200).json({ packages: packages[0] });
+      res.status(200).json(packages);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -26,14 +26,13 @@ class PackagesController {
   //[POST]
   async CreatePackages(req, res) {
     try {
-      let token = req.cookies[process.env.COOKIE];
-      let par = jwt.verify(token, process.env.SECRET);
+      const user_id = req.user_id
       const form = {
-        user_id: par.id,
-        name: req.body.name,
+        user_id: user_id,
+        ...req.body
       };
       await PackagesRouter.CreatePackages(form);
-      res.status(200).json({ message: "Thêm bản ghi thành công" });
+      res.status(200).json({ message: "Thêm thành công" });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -43,14 +42,8 @@ class PackagesController {
   async UpdatePackages(req, res) {
     try {
       const id = req.params.id;
-      let token = req.cookies[process.env.COOKIE];
-      let par = jwt.verify(token, process.env.SECRET);
-      const form = {
-        user_id: par.id,
-        name: req.body.name,
-      };
-      await PackagesRouter.UpdatePackages(id, form);
-      res.status(200).json({ message: "Chỉnh sửa bản ghi thành công" });
+      await PackagesRouter.UpdatePackages(id, req.body);
+      res.status(200).json({ message: "Chỉnh sửa thành công" });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -60,12 +53,12 @@ class PackagesController {
   async RemovePackages(req, res) {
     try {
       const id = req.params.id;
-      
+
       await PackagesRouter.DeletePackages(id);
       res.status(200).json({ message: "Xóa bản ghi thành công" });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Lỗi truy vấn" });
+      res.status(500).json({ message: "Không thể xóa bản ghi này!" });
     }
   }
 }

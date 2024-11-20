@@ -1,5 +1,5 @@
 import connection from "../config/db";
-import MapDetailModel from "./MapDetail";
+import TourModel from "./Tour";
 const MapModel = {
   // lấy tất cả Map
   getAllMap: () => {
@@ -9,31 +9,52 @@ const MapModel = {
         if (err) {
           reject(err);
         } else {
-          if (results.length === 0) {
-            return reject(err);
-          }
           const newArr = [];
           for (const item of results) {
             const { id, ...data } = item;
-            const listMapDetail = await MapDetailModel.GetMapDetailByMapId(
-              item.id
-            );
-            if (listMapDetail) {
-              const { id: mapDetail_id, ...dataDetail } = listMapDetail;
-              const newData = {
-                id: id,
-                ...data,
-                mapDetail_id: mapDetail_id,
-                ...dataDetail,
-              };
-              newArr.push(newData);
+            const listTourByMapId = await TourModel.GetOneTour_ByPoint(id)
+            const newData = {
+              id: id,
+              listTourByMapId,
+              ...data
             }
+            newArr.push(newData);
           }
-          resolve(newArr);
+          return resolve(newArr);
         }
       });
     });
   },
+  // lấy tất cả Map
+  getAllMapPage: (searchName) => {
+    return new Promise((resolve, reject) => {
+      let query = `SELECT m.* 
+      FROM map m 
+      WHERE is_deleted = 0`;
+      if (searchName) {
+        query += ` AND m.name LIKE '%${searchName}%'`
+      }
+      connection.query(query, async (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          const newArr = [];
+          for (const item of results) {
+            const { id, ...data } = item;
+            const listTourByMapId = await TourModel.GetOneTour_ByPoint(id)
+            const newData = {
+              id: id,
+              listTourByMapId,
+              ...data
+            }
+            newArr.push(newData);
+          }
+          return resolve(newArr);
+        }
+      });
+    });
+  },
+
   // lấy 1 địa điểm
   getOneMap: (id) => {
     return new Promise((resolve, reject) => {
@@ -46,22 +67,39 @@ const MapModel = {
             return reject(err);
           }
 
-          const { ...data } = results[0];
-          const dataDetail = await MapDetailModel.GetMapDetailByMapId(id);
-          const { id: mapDetail_id, logo, ...items } = dataDetail;
+          const { logo, ...data } = results[0];
           const newData = {
             id: id,
+            logo: logo ? logo.replace(/\\/g, '/') : "",
             ...data,
-            logo: logo.replace(/\\/g, "/"),
-            mapDetail_id: mapDetail_id,
-            ...items,
           };
           return resolve(newData);
         }
       });
     });
   },
+  getOneMapByCoordinates: (coordinates) => {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM map WHERE coordinates LIKE '%${coordinates}%'`;
+      connection.query(query, async (err, results) => {
+        if (err) {
+          return reject(err);
+        } else {
+          if (results.length === 0) {
+            return reject(err)
+          }
 
+          const {logo, ...data } = results[0]
+        
+          const newData = {
+            ...data,
+            logo: logo ? logo.replace(/\\/g, '/') : "",
+          }
+          return resolve(newData);
+        }
+      });
+    });
+  },
   // lấy địa điểm theo code
   getOneMap_ByCode: (code) => {
     return new Promise((resolve, reject) => {
@@ -78,8 +116,8 @@ const MapModel = {
   //tạo điểm du lịch
   createMap: (item) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO map(code,user_id,name,coordinates) VALUES (?,?,?,?)`;
-      const values = [item.code, item.user_id, item.name, item.coordinates];
+      const query = `INSERT INTO map( code , user_id,name , coordinates , logo , image , address , content , open_hour , title) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+      const values = [item.code, item.user_id, item.name, item.coordinates,item.logo,item.image,item.address,item.content,item.open_hour,item.title];
       connection.query(query, values, (err, results) => {
         if (err) {
           reject(err);
@@ -92,8 +130,8 @@ const MapModel = {
   // update
   updateMap: (id, item) => {
     return new Promise((resolve, reject) => {
-      const query = `UPDATE map SET name = ?,coordinates = ? WHERE id = ?`;
-      const values = [item.name, item.coordinates, id];
+      const query = `UPDATE map SET name = ?,coordinates = ? , logo = ? , image = ? , address = ? , content = ? , open_hour = ? , title = ? WHERE id = ${id}`;
+      const values = [item.name, item.coordinates,item.logo,item.image,item.address,item.content,item.open_hour,item.title];
       connection.query(query, values, (err, results) => {
         if (err) {
           reject(err);

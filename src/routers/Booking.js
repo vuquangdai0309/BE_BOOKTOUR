@@ -11,5 +11,9 @@ router.post("/create-booking", BookingController.CreateBooking);
 router.get("/:id/get-one-booking", BookingController.GetOneBooking);
 // lấy tất cả
 router.get("/get-all-booking", BookingController.GetAllBooking);
+// lấy tất cả page
+router.get("/get-all-booking-page", BookingController.GetAllBookingPage);
+// update trang thai
+router.patch("/:id/update-status",BookingController.updateStatus)
 
 export default router;

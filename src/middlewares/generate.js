@@ -4,45 +4,53 @@ import fs from "fs";
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 async function createAndSendPdf(htmlContent, filename, res) {
   let browser;
-  try {
-    // Khởi động Puppeteer với các tùy chọn không sử dụng sandbox (thường dùng cho môi trường server)
-    browser = await puppeteer.launch({
-      headless: true, // Không hiển thị UI
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], // Thêm các tham số cho môi trường server
-    });
+    try {
+        console.log("Bắt đầu tạo PDF...");
+        browser = await puppeteer.launch({
+            headless: true,
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        });
 
-    const page = await browser.newPage();
+        const page = await browser.newPage();
+        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+        console.log("Nội dung HTML đã được thiết lập.");
 
-    // Thiết lập nội dung HTML cho trang
-    await page.setContent(htmlContent);
+        const pdfBuffer = await page.pdf({
+            format: "A4",
+            landscape: true,
+            printBackground: true,
+            margin: {
+                bottom: "2cm",
+                top: "2cm",
+                left: "3cm",
+                right: "3cm",
+            },
+        });
+        console.log("PDF đã được tạo.");
 
-    // Tạo PDF từ nội dung HTML
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      landscape: true, // Chế độ ngang
-      printBackground: true, // In background
-      margin: {
-        bottom: "2cm",
-        top: "2cm",
-        left: "3cm",
-        right: "3cm",
-      },
-    });
+        await page.close();
 
-    // Gửi PDF đã tạo về client mà không lưu vào server
-    res.contentType("application/pdf"); // Đặt header cho file PDF
-    res.send(pdfBuffer); // Gửi buffer PDF trực tiếp về client
-  } catch (error) {
-    // Xử lý lỗi nếu có
-    console.error("Lỗi khi tạo và gửi PDF:", error);
-    res.status(500).send("Lỗi hệ thống");
-  } finally {
-    // Đảm bảo đóng trình duyệt sau khi xử lý xong
-    if (browser) {
-      await browser.close();
+        // Thiết lập header đúng cách
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="${filename}.pdf"`,
+            'Content-Length': pdfBuffer.length,
+            'Content-Encoding': 'identity', // Đảm bảo không nén lại dữ liệu
+        });
+
+        res.status(200).end(pdfBuffer, 'binary'); // Sử dụng res.end thay vì res.send
+        console.log("PDF đã được gửi về client.");
+    } catch (error) {
+        console.error("Lỗi khi tạo và gửi PDF:", error);
+        res.status(500).json({ message: "Lỗi hệ thống khi tạo PDF." });
+    } finally {
+        if (browser) {
+            await browser.close();
+            console.log("Trình duyệt Puppeteer đã đóng.");
+        }
     }
-  }
 }
+
 function generateRandomString(length) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let result = "";

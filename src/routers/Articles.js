@@ -11,7 +11,7 @@ router.delete(
 );
 //tạo mới
 router.patch(
-  "/:id/update-articles",
+  "/update-articles",
   checkToken,
   uploadItem.single("image"),
   ArticlesController.UpdateArticles
@@ -30,7 +30,7 @@ router.get(
   ArticlesController.GetArticles_ByCategory
 );
 // lấy 1 bài viết theo id
-router.get("/:id/get-one-articles", ArticlesController.GetOneArticles);
+router.get("/:id/get-articles-byId", ArticlesController.GetOneArticles);
 
 // lấy 1 bài viết theo code
 router.get(

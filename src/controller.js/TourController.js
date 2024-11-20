@@ -3,25 +3,45 @@ import TourModel from "../models/Tour";
 
 class TourController {
   // [GET]
+  async GetAllTourPage(req, res) {
+    try {
+      const { searchName, page = 1,pageSize: sizePage } = req.query;
+      const pageSize = sizePage ? sizePage : 6; // Kích thước trang
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = page * pageSize;
+      const tours = await TourModel.GetAllTourPage(searchName);
+      const totalRecords = tours.length; // Tổng số bản ghi
+      const totalPages = Math.ceil(totalRecords / pageSize);
+      const pages = Array.from({ length: totalPages }, (_, index) => {
+        return {
+          number: index + 1,
+          active: index + 1 === page,
+          isDots: index + 1 > 5,
+        };
+      });
+      const paginatedData = tours.slice(startIndex, endIndex);
+      const views = {
+        results: paginatedData,
+        pagination: {
+          prev: page > 1 ? page - 1 : null,
+          next: endIndex < totalRecords ? page + 1 : null,
+          pages: pages,
+          totalPages: totalPages,
+          pageSize: pageSize,
+          totalRecords: totalRecords // Thêm tổng số bản ghi
+        },
+      };
+      return res.status(200).json(views);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Lỗi truy vấn" });
+    }
+  }
+  // [GET]
   async GetAllTour(req, res) {
     try {
       const tours = await TourModel.GetAllTour();
-      if (tours.length > 0) {
-        const tourMap = new Map();
-        tours.forEach((element) => {
-          if (!tourMap.has(element.id)) {
-            tourMap.set(element.id, {
-              id: element.id,
-              name_map: element.name_map,
-              suggest: [],
-            });
-          }
-          const getTourMap = tourMap.get(element.id);
-          getTourMap.suggest.push(element.map_suggest);
-        });
-        const data = Array.from(tourMap.values());
-        res.status(200).json(data);
-      }
+      return res.status(200).json(tours);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -31,8 +51,9 @@ class TourController {
   async GetOneTour(req, res) {
     try {
       const id = req.params.id;
-      const tours = await TourModel.GetOneTour(id);
-      res.status(200).json({ tours: tours[0] });
+      const tour = await TourModel.GetOneTour(id);
+      console.log(tour)
+      res.status(200).json(tour);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -43,36 +64,7 @@ class TourController {
     try {
       const point = req.params.point;
       const tours = await TourModel.GetOneTour_ByPoint(point);
-      if (tours.length > 0) {
-        const tourMap = new Map();
-        tours.forEach((element) => {
-          if (!tourMap.has(element.point_id)) {
-            tourMap.set(element.point_id, {
-              name_map: element.name_map,
-              suggestObj: new Map(),
-            });
-          }
-          const getTourMap = tourMap.get(element.point_id);
-          if (element.id !== null) {
-            if (!getTourMap.suggestObj.has(element.id)) {
-              getTourMap.suggestObj.set(element.id, {
-                id: element.id,
-                suggest: [],
-              });
-            }
-          }
-          const getSuggestTourMap = getTourMap.suggestObj.get(element.id);
-          getSuggestTourMap.suggest.push(element.map_suggest);
-        });
-        const data = Array.from(tourMap.entries()).map(([id, item]) => {
-          return {
-            point_id: id,
-            name_map: item.name_map,
-            suggestArray: Array.from(item.suggestObj.values()),
-          };
-        });
-        res.status(200).json({data:data[0]});
-      }
+      return res.status(200).json(tours);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -116,10 +108,10 @@ class TourController {
     try {
       const id = req.params.id;
       await TourModel.DeleteTour(id);
-      res.status(200).json({ message: "Xóa bản ghi thành công" });
+      return res.status(203).json({ message: "Xóa bản ghi thành công" });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Lỗi truy vấn" });
+      res.status(500).json({ message: "Có lỗi xảy ra khi xóa" });
     }
   }
 }

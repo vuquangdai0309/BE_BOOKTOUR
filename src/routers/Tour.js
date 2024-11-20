@@ -14,5 +14,7 @@ router.get("/:point/get-one-tour-point", TourController.GetOneTour_ByPoint);
 router.get("/:id/get-one-tour", TourController.GetOneTour);
 // lấy tất cả
 router.get("/get-all-tour", TourController.GetAllTour);
+// lấy tất cả
+router.get("/get-all-tour-page", TourController.GetAllTourPage);
 
 export default router;

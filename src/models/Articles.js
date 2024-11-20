@@ -3,7 +3,11 @@ const ArticlesModel = {
   // lấy tất cả bài viết
   GetAllArticles: () => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM articles WHERE is_deleted = 0`;
+      const query = `SELECT a.*,
+      c.name AS category_name
+      FROM articles a
+      JOIN category AS c ON c.id = a.category_id
+      WHERE a.is_deleted = 0`;
       connection.query(query, (err, results) => {
         if (err) {
           reject(err);
@@ -19,9 +23,9 @@ const ArticlesModel = {
       const query = `SELECT * FROM articles WHERE is_deleted = 0 AND id = ?`;
       connection.query(query, id, (err, results) => {
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
-          resolve(results);
+          return resolve(results?.[0]);
         }
       });
     });
@@ -55,8 +59,8 @@ const ArticlesModel = {
   // tạo mới
   CreateArticles: (item) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO articles(user_id,category_id,name,date,image,content)
-      VALUES (?,?,?,?,?,?)
+      const query = `INSERT INTO articles(user_id,category_id,name,date,image,content,code)
+      VALUES (?,?,?,?,?,?,?)
       `;
       const values = [
         item.user_id,
@@ -65,6 +69,7 @@ const ArticlesModel = {
         item.date,
         item.image,
         item.content,
+        item.code,
       ];
       connection.query(query, values, (err, results) => {
         if (err) {
@@ -77,6 +82,7 @@ const ArticlesModel = {
   },
   // chỉnh sửa
   UpdateArticles: (id, item) => {
+    console.log(`item:`,item)
     return new Promise((resolve, reject) => {
       const query = `UPDATE articles SET category_id = ?,name = ?,date = ?,image = ?,content = ?,active = ? WHERE id = ?
       `;
@@ -101,7 +107,7 @@ const ArticlesModel = {
   // xóa
   RemoveArticles: (id) => {
     return new Promise((resolve, reject) => {
-      const query = `UPDATE articles SET is_deleted = 1 WHERE id = ?`;
+      const query = `DELETE FROM articles WHERE id = ?`;
       connection.query(query, id, (err, results) => {
         if (err) {
           reject(err);
