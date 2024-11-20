@@ -16,12 +16,15 @@ const AccountModel = {
   // lấy 1 tài khoản
   GetOneAccount: (id) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM account WHERE is_deleted = 0 AND id = ?`;
+      const query = `SELECT * FROM account WHERE is_deleted = 0 AND id = ${id}`;
       connection.query(query, (err, results) => {
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
-          resolve(results);
+          if(results.length === 0){
+            return reject(err)
+          }
+          return resolve(results[0]);
         }
       });
     });
@@ -92,9 +95,13 @@ const AccountModel = {
     });
   },
   // lấy tài khoản theo email username
-  GetAccount_ByEmailAndUserName: (email, username) => {
+  GetAccount_ByEmailAndUserName: (email, username,id) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM account WHERE is_deleted = 0 AND email = ? OR user_name =?`;
+      let query = `SELECT * FROM account WHERE is_deleted = 0 AND email = ? OR user_name = ?`;
+      if(id){
+        query += ` AND id != ${id}`
+      }
+      console.log(query)
       connection.query(query, [email, username], (err, results) => {
         if (err) {
           reject(err);

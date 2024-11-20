@@ -41,8 +41,9 @@ class MapController {
   //[GET]
   async GetAll(req, res) {
     try {
-      const maps = await MapModel.getAllMap();
-      res.status(200).json(maps);
+      const {searchName} = req.query
+      const maps = await MapModel.getAllMap(searchName);
+      return res.status(200).json(maps);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });

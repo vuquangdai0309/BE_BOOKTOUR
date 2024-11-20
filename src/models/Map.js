@@ -2,12 +2,15 @@ import connection from "../config/db";
 import TourModel from "./Tour";
 const MapModel = {
   // lấy tất cả Map
-  getAllMap: () => {
+  getAllMap: (searchName) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM map WHERE is_deleted = 0`;
+      let query = `SELECT * FROM map WHERE is_deleted = 0`;
+      if(searchName){
+        query += ` AND name LIKE '%${searchName}%'`
+      }
       connection.query(query, async (err, results) => {
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
           const newArr = [];
           for (const item of results) {
