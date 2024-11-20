@@ -146,7 +146,6 @@ class MapController {
       res.status(500).json({ message: "Lỗi truy vấn" });
     }
   }
-
   //[GET]
   async GenerateQr(req, res) {
     try {

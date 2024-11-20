@@ -1,14 +1,16 @@
 import connection from "../config/db";
 const ArticlesModel = {
   // lấy tất cả bài viết
-  GetAllArticles: () => {
+  GetAllArticles: (search) => {
     return new Promise((resolve, reject) => {
       const query = `SELECT a.*,
       c.name AS category_name
       FROM articles a
       JOIN category AS c ON c.id = a.category_id
-      WHERE a.is_deleted = 0`;
-      connection.query(query, (err, results) => {
+      WHERE a.is_deleted = 0 AND a.name LIKE ?`;
+      const values = "%" + search + "%";
+
+      connection.query(query, values, (err, results) => {
         if (err) {
           reject(err);
         } else {
@@ -30,8 +32,8 @@ const ArticlesModel = {
       });
     });
   },
-   // lấy 1 bài viết theo code
-   GetOneArticles_ByCode: (code) => {
+  // lấy 1 bài viết theo code
+  GetOneArticles_ByCode: (code) => {
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM articles WHERE is_deleted = 0 AND code = ?`;
       connection.query(query, code, (err, results) => {
@@ -82,7 +84,7 @@ const ArticlesModel = {
   },
   // chỉnh sửa
   UpdateArticles: (id, item) => {
-    console.log(`item:`,item)
+    console.log(`item:`, item);
     return new Promise((resolve, reject) => {
       const query = `UPDATE articles SET category_id = ?,name = ?,date = ?,image = ?,content = ?,active = ? WHERE id = ?
       `;

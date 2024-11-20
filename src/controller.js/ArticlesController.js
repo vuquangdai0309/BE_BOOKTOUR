@@ -5,8 +5,30 @@ class AccountController {
   //[GET]
   async GetAllArticles(req, res) {
     try {
-      const articles = await ArticlesModel.GetAllArticles();
-      res.status(200).json(articles);
+      const page = parseInt(req.query.page) || 1; // Trang hiện tại
+      const pageSize = 12; // Kích thước trang
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = page * pageSize;
+      const search = req.query.search || "";
+      const data = await ArticlesModel.GetAllArticles(search);
+      const totalPages = Math.ceil(data.length / pageSize);
+      const pages = Array.from({ length: totalPages }, (_, index) => {
+        return {
+          number: index + 1,
+          active: index + 1 === page,
+          isDots: index + 1 > 5,
+        };
+      });
+      const paginatedData = data.slice(startIndex, endIndex);
+      const views = {
+        articles: paginatedData,
+        pagination: {
+          prev: page > 1 ? page - 1 : null,
+          next: endIndex < data.length ? page + 1 : null,
+          pages: pages,
+        },
+      };
+      res.status(200).json(views);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });
@@ -15,7 +37,6 @@ class AccountController {
   //[GET]
   async GetOneArticles(req, res) {
     try {
-
       const id = req.params.id;
       const articles = await ArticlesModel.GetOneArticles(id);
       return res.status(200).json(articles);
@@ -52,7 +73,7 @@ class AccountController {
   //[POST]
   async CreateArticles(req, res) {
     try {
-      const user_id = req.user_id
+      const user_id = req.user_id;
       const imagePath = req.file ? req.file.path : "";
       const form = {
         user_id: user_id,
@@ -62,10 +83,11 @@ class AccountController {
       };
 
       if (Number(req.body.category_id) === 1) {
-        const getArticleByCategoryId = await ArticlesModel.GetOneArticles_ByCategory(req.body.category_id)
+        const getArticleByCategoryId =
+          await ArticlesModel.GetOneArticles_ByCategory(req.body.category_id);
         if (getArticleByCategoryId) {
-          const GetOneArticles = getArticleByCategoryId[0]
-          await ArticlesModel.UpdateArticles(GetOneArticles.id,form);
+          const GetOneArticles = getArticleByCategoryId[0];
+          await ArticlesModel.UpdateArticles(GetOneArticles.id, form);
         }
       } else {
         await ArticlesModel.CreateArticles(form);

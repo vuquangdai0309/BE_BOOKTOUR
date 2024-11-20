@@ -8,8 +8,7 @@ class BookingController {
       const pageSize = 12; // Kích thước trang
       const startIndex = (page - 1) * pageSize;
       const endIndex = page * pageSize;
-      const booking = await BookingModel.GetAllBookingPage(searchName);
-     
+      const booking = await BookingModel.GetAllBookingPage(searchName);    
       if (booking.length > 0) {
         const totalRecords = booking.length; // Tổng số bản ghi
         const totalPages = Math.ceil(totalRecords / pageSize);
