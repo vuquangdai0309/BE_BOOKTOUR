@@ -3,7 +3,7 @@ import ContactModel from "../models/Contact";
 import jwt from "jsonwebtoken";
 class ContactController {
   //[GET]
-  async GetAllContract(req, res) {
+  async GetAllContact(req, res) {
     try {
       const page = parseInt(req.query.page) || 1; // Trang hiện tại
       const pageSize = 12; // Kích thước trang
@@ -35,7 +35,7 @@ class ContactController {
     }
   }
   //[GET]
-  async GetOneContract(req, res) {
+  async GetOneContact(req, res) {
     try {
       const id = req.params.id;
       const data = await ContactModel.GetOneContact(id);
@@ -46,7 +46,7 @@ class ContactController {
     }
   }
   //[POST]
-  async CreateContract(req, res) {
+  async CreateContact(req, res) {
     try {
       const form = {
         ...req.body,
@@ -59,7 +59,7 @@ class ContactController {
     }
   }
   //[PATCH]
-  async ChangeStatusContract(req, res) {
+  async ChangeStatusContact(req, res) {
     try {
       const id = req.params.id;
       const status = req.body.status;
@@ -71,7 +71,7 @@ class ContactController {
     }
   }
   //[DELETE]
-  async RemoveContract(req, res) {
+  async RemoveContact(req, res) {
     try {
       const id = req.params.id;
       await ContactModel.RemoveContact(id);
