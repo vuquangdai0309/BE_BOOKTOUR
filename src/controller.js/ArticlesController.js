@@ -5,12 +5,12 @@ class AccountController {
   //[GET]
   async GetAllArticles(req, res) {
     try {
-      const page = parseInt(req.query.page) || 1; // Trang hiện tại
-      const pageSize = 12; // Kích thước trang
+      console.log(req.query)
+      const {page = page || 1 , searchName = searchName || "" , pageSize } = req.query
       const startIndex = (page - 1) * pageSize;
       const endIndex = page * pageSize;
-      const search = req.query.search || "";
-      const data = await ArticlesModel.GetAllArticles(search);
+      const data = await ArticlesModel.GetAllArticles(searchName);
+      const totalRecords = data.length
       const totalPages = Math.ceil(data.length / pageSize);
       const pages = Array.from({ length: totalPages }, (_, index) => {
         return {
@@ -21,17 +21,20 @@ class AccountController {
       });
       const paginatedData = data.slice(startIndex, endIndex);
       const views = {
-        articles: paginatedData,
+        results: paginatedData,
         pagination: {
           prev: page > 1 ? page - 1 : null,
           next: endIndex < data.length ? page + 1 : null,
           pages: pages,
+          totalPages: totalPages,
+          totalRecords: totalRecords,
+          pageSize: pageSize
         },
       };
-      res.status(200).json(views);
+      return res.status(200).json(views);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Lỗi truy vấn" });
+      return res.status(500).json({ message: "Lỗi truy vấn" });
     }
   }
   //[GET]

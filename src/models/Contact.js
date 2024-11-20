@@ -3,9 +3,8 @@ const ContactModel = {
   // lấy tất cả
   GetAllContact: (search) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM contact WHERE full_name LIKE ? `;
-      const values = "%" + search + "%";
-      connection.query(query, values, (err, results) => {
+      let query = `SELECT * FROM contact WHERE full_name LIKE '%${search}%' ORDER BY id DESC`;
+      connection.query(query,  (err, results) => {
         if (err) {
           reject(err);
         } else {
@@ -56,11 +55,10 @@ const ContactModel = {
     });
   },
   // chỉnh sửa status
-  ChangeStatusContact: (id, item) => {
+  ChangeStatusContact: (id, status) => {
     return new Promise((resolve, reject) => {
-      const query = `UPDATE contact SET status = ? WHERE id =?`;
-      const values = [item.status, id];
-      connection.query(query, values, (err, results) => {
+      const query = `UPDATE contact SET status = ${status} WHERE id = ${id}`;
+      connection.query(query, (err, results) => {
         if (err) {
           reject(err);
         } else {

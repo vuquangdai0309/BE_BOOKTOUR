@@ -12,9 +12,9 @@ const ArticlesModel = {
 
       connection.query(query, values, (err, results) => {
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
-          resolve(results);
+          return resolve(results);
         }
       });
     });

@@ -1,16 +1,16 @@
-import { message } from "antd";
+
 import ContactModel from "../models/Contact";
 import jwt from "jsonwebtoken";
 class ContactController {
   //[GET]
   async GetAllContact(req, res) {
     try {
-      const page = parseInt(req.query.page) || 1; // Trang hiện tại
+      const {page , searchName } = req.query
       const pageSize = 12; // Kích thước trang
       const startIndex = (page - 1) * pageSize;
       const endIndex = page * pageSize;
-      const search = req.query.search || "";
-      const data = await ContactModel.GetAllContact(search);
+      const data = await ContactModel.GetAllContact(searchName);
+      const totalRecords = data.length
       const totalPages = Math.ceil(data.length / pageSize);
       const pages = Array.from({ length: totalPages }, (_, index) => {
         return {
@@ -26,6 +26,9 @@ class ContactController {
           prev: page > 1 ? page - 1 : null,
           next: endIndex < data.length ? page + 1 : null,
           pages: pages,
+          totalPages: totalPages,
+          totalRecords: totalRecords,
+          pageSize: pageSize
         },
       };
       res.status(200).json(views);
@@ -52,10 +55,10 @@ class ContactController {
         ...req.body,
       };
       await ContactModel.CreateContact(form);
-      res.status(200).json({ message: "Gửi thông tin thành công" });
+      return res.status(200).json({ message: "Gửi thông tin thành công , chúng tôi sẽ sớm liên hệ với bạn!" });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Lỗi truy vấn" });
+      return res.status(500).json({ message: "Gửi thông tin không thành công" });
     }
   }
   //[PATCH]
