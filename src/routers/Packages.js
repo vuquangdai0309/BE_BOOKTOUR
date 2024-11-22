@@ -1,5 +1,5 @@
 import express from "express";
-import PackagesController from "../controller.js/PackagesController";
+import PackagesController from "../controller/PackagesController";
 const router = express.Router();
 import checkToken from "../middlewares/checkToken";
 // xóa

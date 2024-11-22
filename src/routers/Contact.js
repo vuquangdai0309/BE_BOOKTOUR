@@ -1,5 +1,5 @@
 import express from "express";
-import ContactController from "../controller.js/ContactController";
+import ContactController from "../controller/ContactController";
 import checkToken from "../middlewares/checkToken";
 const router = express.Router();
 import checkToken from "../middlewares/checkToken";

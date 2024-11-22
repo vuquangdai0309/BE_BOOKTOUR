@@ -1,5 +1,5 @@
 import express from "express";
-import MapController from "../controller.js/MapController";
+import MapController from "../controller/MapController";
 import checkToken from "../middlewares/checkToken";
 import { uploadItem } from "../middlewares/upload";
 const router = express.Router();

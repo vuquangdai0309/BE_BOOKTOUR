@@ -1,5 +1,5 @@
 import express from "express";
-import ViewmapController from "../controller.js/ViewmapController";
+import ViewmapController from "../controller/ViewmapController";
 const router = express.Router();
 import checkToken from "../middlewares/checkToken";
 // thay đổi hiển thị

@@ -1,5 +1,5 @@
 import express from "express";
-import TourController from "../controller.js/TourController";
+import TourController from "../controller/TourController";
 const router = express.Router();
 import checkToken from "../middlewares/checkToken";
 // xóa bỏ

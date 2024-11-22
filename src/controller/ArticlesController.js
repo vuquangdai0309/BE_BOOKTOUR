@@ -5,12 +5,15 @@ class AccountController {
   //[GET]
   async GetAllArticles(req, res) {
     try {
-      console.log(req.query)
-      const {page = page || 1 , searchName = searchName || "" , pageSize } = req.query
+      const {
+        page = page || 1,
+        searchName = searchName || "",
+        pageSize,
+      } = req.query;
       const startIndex = (page - 1) * pageSize;
       const endIndex = page * pageSize;
       const data = await ArticlesModel.GetAllArticles(searchName);
-      const totalRecords = data.length
+      const totalRecords = data.length;
       const totalPages = Math.ceil(data.length / pageSize);
       const pages = Array.from({ length: totalPages }, (_, index) => {
         return {
@@ -28,7 +31,7 @@ class AccountController {
           pages: pages,
           totalPages: totalPages,
           totalRecords: totalRecords,
-          pageSize: pageSize
+          pageSize: pageSize,
         },
       };
       return res.status(200).json(views);
@@ -104,7 +107,7 @@ class AccountController {
   //[PATCH]
   async UpdateArticles(req, res) {
     try {
-      const id = req.body.id;
+      const id = req.params.id;
       var imagePath = req.file ? req.file.path : req.body.image;
       const form = {
         image: imagePath,

@@ -1,5 +1,5 @@
 import express from "express";
-import AccountController from "../controller.js/AccountController";
+import AccountController from "../controller/AccountController";
 const router = express.Router();
 
 // update

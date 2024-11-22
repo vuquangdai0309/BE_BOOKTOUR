@@ -1,5 +1,5 @@
 import express from "express";
-import ArticlesController from "../controller.js/ArticlesController";
+import ArticlesController from "../controller/ArticlesController";
 import { uploadItem } from "../middlewares/upload";
 const router = express.Router();
 import checkToken from "../middlewares/checkToken";
@@ -11,7 +11,7 @@ router.delete(
 );
 //tạo mới
 router.patch(
-  "/update-articles",
+  "/:id/update-articles",
   checkToken,
   uploadItem.single("image"),
   ArticlesController.UpdateArticles

@@ -1,5 +1,5 @@
 import express from "express";
-import BookingController from "../controller.js/BookingController";
+import BookingController from "../controller/BookingController";
 const router = express.Router();
 // xóa bỏ
 router.delete("/:id/remove-booking", BookingController.RemoveBooking);
