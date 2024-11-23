@@ -26,7 +26,7 @@ router.get("/:code/generate", MapController.GenerateQr);
 // lấy các địa điểm
 router.get("/get-all-map",  MapController.GetAll);
 // lấy các địa điểm
-router.get("/get-all-map-page", checkToken, MapController.GetAllPage);
+router.get("/get-all-map-page", checkToken, MapController. GetAllPage);
 // lấy 1 điểm
 router.get("/:id/get-one-map", MapController.GetOne);
 // lay mapp theo toa do
