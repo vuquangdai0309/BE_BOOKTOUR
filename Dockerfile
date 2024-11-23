@@ -45,10 +45,10 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 RUN npm install
-
-# COPY font/times.ttf /usr/share/fonts/truetype/msttcorefonts/
-
+RUN chmod -R 755 /usr/src/app/node_modules/.bin
+# Copy mã nguồn vào container
 COPY . .
+RUN chmod -R 755 /usr/src/app
 EXPOSE 3000
 
 CMD ["npm", "run", "dev", "--", "--host"]
