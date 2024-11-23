@@ -1,5 +1,5 @@
 import express from "express";
-import CategoryController from "../controller.js/CategoryController";
+import CategoryController from "../controller/CategoryController";
 import checkToken from "../middlewares/checkToken";
 const router = express.Router();
 import checkToken from "../middlewares/checkToken";

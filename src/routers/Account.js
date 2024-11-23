@@ -1,7 +1,6 @@
 import express from "express";
-import AccountController from "../controller.js/AccountController";
 const router = express.Router();
-
+import AccountController from "../controller/AccountController"
 // update
 router.patch("/:id/update-account", AccountController.UpdateAccount);
 //đăng ký
