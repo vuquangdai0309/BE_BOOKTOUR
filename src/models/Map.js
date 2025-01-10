@@ -37,23 +37,26 @@ const MapModel = {
       if (searchName) {
         query += ` AND m.name LIKE '%${searchName}%'`
       }
-      console.log(query)
       connection.query(query, async (err, results) => {
         if (err) {
-          reject(err);
+          return reject(err);
         } else {
-          const newArr = [];
-          for (const item of results) {
-            const { id, ...data } = item;
-            const listTourByMapId = await TourModel.GetOneTour_ByPoint(id)
-            const newData = {
-              id: id,
-              listTourByMapId,
-              ...data
+          try {
+            const newArr = [];
+            for (const item of results) {
+              const { id, ...data } = item;
+              const listTourByMapId = await TourModel.GetOneTour_ByPoint(id);
+              const newData = {
+                id: id,
+                listTourByMapId,
+                ...data
+              };
+              newArr.push(newData);
             }
-            newArr.push(newData);
+            return resolve(newArr);
+          } catch (error) {
+            return reject(error);
           }
-          return resolve(newArr);
         }
       });
     });
@@ -61,7 +64,7 @@ const MapModel = {
   // lấy 1 địa điểm
   getOneMap: (id) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM map WHERE is_deleted = 0 AND id = ${id}`;
+      const query = `SELECT * FROM map WHERE id = ${id}`;
       connection.query(query, async (err, results) => {
         if (err) {
           return reject(err);
@@ -105,7 +108,7 @@ const MapModel = {
   // lấy địa điểm theo code
   getOneMap_ByCode: (code) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM map WHERE is_deleted = 0 AND code IN(?)`;
+      const query = `SELECT * FROM map WHERE code IN(?)`;
       connection.query(query, code, async (err, results) => {
         if (err) {
           return reject(err);

@@ -120,5 +120,17 @@ class AccountController {
       res.status(500).json({ message: "Lỗi truy vấn" });
     }
   }
+  // logout
+  async logout(req, res) {
+    try {
+      res.clearCookie(process.env.COOKIE)
+      return res.status(203).json({
+        message: "Đăng xuất thành công"
+      })
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Lỗi truy vấn" });
+    }
+  }
 }
 export default new AccountController();

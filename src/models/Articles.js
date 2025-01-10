@@ -9,7 +9,7 @@ const ArticlesModel = {
       JOIN category AS c ON c.id = a.category_id
       WHERE a.is_deleted = 0`;
       if (search) {
-        const values = `'${search}'`;
+        const values = `'%${search}%'`;
         query += ` AND a.name LIKE ${values}`
       }
       connection.query(query, (err, results) => {

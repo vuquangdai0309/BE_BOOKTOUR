@@ -11,5 +11,7 @@ router.post("/login", AccountController.Login);
 router.get("/get-all-account", AccountController.GetAllAccount);
 // lấy 1 tài khoản
 router.get("/:id/get-one-account", AccountController.GetOneAccount);
+// rout
+router.post("/logout",AccountController.logout)
 
 export default router;

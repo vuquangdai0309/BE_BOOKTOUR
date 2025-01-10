@@ -6,12 +6,13 @@ class AccountController {
   async GetAllArticles(req, res) {
     try {
       const {
-        page = page || 1,
-        searchName = searchName || "",
+        page = 1,
+        searchName =  "",
         pageSize,
       } = req.query;
       const startIndex = (page - 1) * pageSize;
       const endIndex = page * pageSize;
+  
       const data = await ArticlesModel.GetAllArticles(searchName);
       const totalRecords = data.length;
       const totalPages = Math.ceil(data.length / pageSize);

@@ -5,7 +5,7 @@ import { uploadItem } from "../middlewares/upload";
 import BannerController from "../controller/BannerController";
 
 // xóa
-routerBanner.get("/banner/get",checkToken,BannerController.getBanner);
+routerBanner.get("/banner/get",BannerController.getBanner);
 routerBanner.patch("/banner/updateById",uploadItem.single("image"),checkToken,BannerController.updateBanner);
 
 export default routerBanner;
