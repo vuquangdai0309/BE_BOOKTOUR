@@ -11,7 +11,7 @@ router.delete(
 );
 //tạo mới
 router.patch(
-  "/:id/update-articles",
+  "/update-articles",
   checkToken,
   uploadItem.single("image"),
   ArticlesController.UpdateArticles

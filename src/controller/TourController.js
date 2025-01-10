@@ -5,6 +5,7 @@ class TourController {
   // [GET]
   async GetAllTourPage(req, res) {
     try {
+     
       const { searchName, page = 1,pageSize: sizePage } = req.query;
       const pageSize = sizePage ? sizePage : 6; // Kích thước trang
       const startIndex = (page - 1) * pageSize;

@@ -5,8 +5,7 @@ class MapController {
   //[GET]
   async GetAllPage(req, res) {
     try {
-      const { searchName, page = 1 } = req.query;
-      const pageSize = 12; // Kích thước trang
+      const { searchName = "", page = 1 ,pageSize = 12} = req.query;
       const startIndex = (page - 1) * pageSize;
       const endIndex = page * pageSize;
       const maps = await MapModel.getAllMapPage(searchName);
@@ -54,8 +53,12 @@ class MapController {
     try {
       const id = req.params.id;
       const maps = await MapModel.getOneMap(id);
-
-      res.status(200).json(maps);
+      const listMap = await MapModel.getAllMap()
+      const newData = {
+        listMap:listMap.filter((item) => item.id !== id),
+        ...maps
+      }
+      res.status(200).json(newData);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Lỗi truy vấn" });

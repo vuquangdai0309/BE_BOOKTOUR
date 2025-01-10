@@ -19,6 +19,7 @@ const TourModel = {
         if (err) {
           return reject(err);
         } else {
+     
           const newArr = []
           for (const item of results) {
             const { suggest_id, ...data } = item

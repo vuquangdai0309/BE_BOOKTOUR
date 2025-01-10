@@ -5,7 +5,7 @@ const MapModel = {
   getAllMap: (searchName) => {
     return new Promise((resolve, reject) => {
       let query = `SELECT * FROM map WHERE is_deleted = 0`;
-      if(searchName){
+      if (searchName) {
         query += ` AND name LIKE '%${searchName}%'`
       }
       connection.query(query, async (err, results) => {
@@ -33,10 +33,11 @@ const MapModel = {
     return new Promise((resolve, reject) => {
       let query = `SELECT m.* 
       FROM map m 
-      WHERE is_deleted = 0`;
+      WHERE m.is_deleted = 0`;
       if (searchName) {
         query += ` AND m.name LIKE '%${searchName}%'`
       }
+      console.log(query)
       connection.query(query, async (err, results) => {
         if (err) {
           reject(err);
@@ -57,19 +58,17 @@ const MapModel = {
       });
     });
   },
-
   // lấy 1 địa điểm
   getOneMap: (id) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM map WHERE is_deleted = 0 AND id IN(?)`;
-      connection.query(query, [id], async (err, results) => {
+      const query = `SELECT * FROM map WHERE is_deleted = 0 AND id = ${id}`;
+      connection.query(query, async (err, results) => {
         if (err) {
           return reject(err);
         } else {
           if (results.length === 0) {
             return reject(err);
           }
-
           const { logo, ...data } = results[0];
           const newData = {
             id: id,
@@ -92,8 +91,8 @@ const MapModel = {
             return reject(err)
           }
 
-          const {logo, ...data } = results[0]
-        
+          const { logo, ...data } = results[0]
+
           const newData = {
             ...data,
             logo: logo ? logo.replace(/\\/g, '/') : "",
@@ -120,7 +119,7 @@ const MapModel = {
   createMap: (item) => {
     return new Promise((resolve, reject) => {
       const query = `INSERT INTO map( code , user_id,name , coordinates , logo , image , address , content , open_hour , title) VALUES (?,?,?,?,?,?,?,?,?,?)`;
-      const values = [item.code, item.user_id, item.name, item.coordinates,item.logo,item.image,item.address,item.content,item.open_hour,item.title];
+      const values = [item.code, item.user_id, item.name, item.coordinates, item.logo, item.image, item.address, item.content, item.open_hour, item.title];
       connection.query(query, values, (err, results) => {
         if (err) {
           reject(err);
@@ -134,7 +133,7 @@ const MapModel = {
   updateMap: (id, item) => {
     return new Promise((resolve, reject) => {
       const query = `UPDATE map SET name = ?,coordinates = ? , logo = ? , image = ? , address = ? , content = ? , open_hour = ? , title = ? WHERE id = ${id}`;
-      const values = [item.name, item.coordinates,item.logo,item.image,item.address,item.content,item.open_hour,item.title];
+      const values = [item.name, item.coordinates, item.logo, item.image, item.address, item.content, item.open_hour, item.title];
       connection.query(query, values, (err, results) => {
         if (err) {
           reject(err);

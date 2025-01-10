@@ -9,6 +9,8 @@ import PackagesRouter from "../routers/Packages";
 import BookingRouter from "../routers/Booking";
 import ContactRouter from "../routers/Contact";
 import ServiceRouter from "../routers/Service";
+import routerBanner from "./Banner";
+import myInfoRouter from "./MyInfo";
 function route(app) {
   app.use("/api", MapRouter);
   app.use("/api", AccountRouter);
@@ -20,5 +22,8 @@ function route(app) {
   app.use("/api", BookingRouter);
   app.use("/api", ContactRouter);
   app.use("/api", ServiceRouter);
+  app.use("/api", routerBanner);
+  app.use("/api", myInfoRouter);
+  app.use("/api", routerBanner);
 }
 export default route;

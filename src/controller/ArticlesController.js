@@ -107,13 +107,13 @@ class AccountController {
   //[PATCH]
   async UpdateArticles(req, res) {
     try {
-      const id = req.params.id;
+     
       var imagePath = req.file ? req.file.path : req.body.image;
       const form = {
         image: imagePath,
         ...req.body,
       };
-      await ArticlesModel.UpdateArticles(id, form);
+      await ArticlesModel.UpdateArticles(form.id, form);
       return res.status(200).json({ message: "Chỉnh sửa bản ghi thành công" });
     } catch (error) {
       console.log(error);

@@ -3,14 +3,16 @@ const ArticlesModel = {
   // lấy tất cả bài viết
   GetAllArticles: (search) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT a.*,
+      let query = `SELECT a.*,
       c.name AS category_name
       FROM articles a
       JOIN category AS c ON c.id = a.category_id
-      WHERE a.is_deleted = 0 AND a.name LIKE ?`;
-      const values = "%" + search + "%";
-
-      connection.query(query, values, (err, results) => {
+      WHERE a.is_deleted = 0`;
+      if (search) {
+        const values = `'${search}'`;
+        query += ` AND a.name LIKE ${values}`
+      }
+      connection.query(query, (err, results) => {
         if (err) {
           return reject(err);
         } else {
@@ -23,11 +25,20 @@ const ArticlesModel = {
   GetOneArticles: (id) => {
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM articles WHERE is_deleted = 0 AND id = ?`;
-      connection.query(query, id, (err, results) => {
+      connection.query(query, id, async (err, results) => {
         if (err) {
           return reject(err);
         } else {
-          return resolve(results?.[0]);
+          if (results.length <= 0) {
+            return reject(err);
+          }
+          const data = results?.[0]
+          const listArticles = await ArticlesModel.GetAllArticles()
+          const newData = {
+            ...data,
+            listArticles: listArticles.filter((item) => item.id != data.id && item.category_id === 2)
+          }
+          return resolve(newData);
         }
       });
     });
